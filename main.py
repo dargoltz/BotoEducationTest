@@ -1,10 +1,20 @@
 import uuid
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from pydantic import HttpUrl
 
-app = FastAPI()
+from db import init_db
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.post("/shorten", response_model=uuid.UUID, description="Make short redirect link")

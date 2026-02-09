@@ -13,3 +13,16 @@ def get_db_connection():
         yield conn
     finally:
         conn.close()
+
+
+def init_db() -> None:
+    with get_db_connection() as conn:
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS links(
+                id TEXT PRIMARY KEY,
+                link TEXT NOT NULL
+            )
+            """
+        )
+        conn.commit()
