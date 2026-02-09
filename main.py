@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from pydantic import HttpUrl
 
-from db import init_db, get_link_by_id, add_link_to_db
+from src.db import init_db, get_link_by_id, add_link_to_db
 
 
 @asynccontextmanager
