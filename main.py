@@ -23,8 +23,8 @@ async def add_link(link: HttpUrl) -> uuid.UUID:
     return add_link_to_db(link)
 
 
-@app.get("/{link_id:uuid}", response_model=RedirectResponse, description="Redirect to original link")
-async def redirect_to_link(link_id: uuid.UUID) -> RedirectResponse:
+@app.get("/{link_id:uuid}", description="Redirect to original link")
+async def redirect_to_link(link_id: uuid.UUID):
     return RedirectResponse(
         url=get_link_by_id(link_id),
         status_code=301
