@@ -1,5 +1,9 @@
 import contextlib
 import sqlite3
+import uuid
+
+from fastapi import HTTPException
+from pydantic import HttpUrl
 
 DB_NAME = "links.db"
 
@@ -26,3 +30,30 @@ def init_db() -> None:
             """
         )
         conn.commit()
+
+
+def add_link_to_db(link: HttpUrl) -> uuid.UUID:
+    link_id = uuid.uuid4()
+
+    with get_db_connection() as conn:
+        conn.execute(
+            "INSERT INTO links (id, link) VALUES (?, ?)",
+            (str(link_id), str(link)),
+        )
+        conn.commit()
+
+    return link_id
+
+
+def get_link_by_id(link_id: uuid.UUID) -> str:
+    with get_db_connection() as conn:
+        cursor = conn.execute(
+            "SELECT link FROM links WHERE id = ?",
+            (str(link_id),),
+        )
+        row = cursor.fetchone()
+
+    if row is None:
+        raise HTTPException(status_code=404, detail="Link not found")
+
+    return row["link"]
